@@ -1,0 +1,104 @@
+# file: manajemen_perusahaan.py
+
+class Karyawan:
+    def __init__(self, nama, posisi, gaji):
+        self.nama = nama
+        self.posisi = posisi
+        self.gaji = gaji
+
+    def __str__(self):
+        return f"{self.nama} - {self.posisi} - Rp{self.gaji:,}"
+
+class Departemen:
+    def __init__(self, nama, anggaran, jumlah_proyek):
+        self.nama = nama
+        self.anggaran = anggaran
+        self.jumlah_proyek = jumlah_proyek
+        self.karyawan_list = []
+
+    def tambah_karyawan(self, karyawan):
+        self.karyawan_list.append(karyawan)
+
+    def tampilkan_info(self):
+        print(f"\nDepartemen: {self.nama}")
+        print(f"Anggaran: Rp{self.anggaran:,}")
+        print(f"Jumlah Proyek: {self.jumlah_proyek}")
+        print("Daftar Karyawan:")
+        if not self.karyawan_list:
+            print("- Tidak ada karyawan.")
+        for k in self.karyawan_list:
+            print(f"  - {k}")
+
+class Perusahaan:
+    def __init__(self, nama):
+        self.nama = nama
+        self.departemen_list = []
+
+    def tambah_departemen(self, departemen):
+        self.departemen_list.append(departemen)
+
+    def hapus_departemen(self, nama_departemen):
+        self.departemen_list = [d for d in self.departemen_list if d.nama != nama_departemen]
+
+    def tampilkan_struktur(self):
+        print(f"\n=== Struktur Perusahaan: {self.nama} ===")
+        if not self.departemen_list:
+            print("Belum ada departemen.")
+        for d in self.departemen_list:
+            d.tampilkan_info()
+
+# === CLI ===
+def menu():
+    perusahaan = Perusahaan("PT Teknologi Cerdas")
+
+    while True:
+        print("\n=== Menu Manajemen Perusahaan ===")
+        print("1. Tambah Departemen")
+        print("2. Tambah Karyawan ke Departemen")
+        print("3. Tampilkan Struktur Perusahaan")
+        print("4. Hapus Departemen")
+        print("0. Keluar")
+        pilihan = input("Pilih menu: ")
+
+        if pilihan == "1":
+            nama = input("Nama Departemen: ")
+            anggaran = float(input("Anggaran: "))
+            proyek = int(input("Jumlah Proyek: "))
+            dept = Departemen(nama, anggaran, proyek)
+            perusahaan.tambah_departemen(dept)
+            print("Departemen ditambahkan.")
+
+        elif pilihan == "2":
+            if not perusahaan.departemen_list:
+                print("Belum ada departemen.")
+                continue
+            print("Pilih Departemen:")
+            for idx, d in enumerate(perusahaan.departemen_list):
+                print(f"{idx+1}. {d.nama}")
+            idx = int(input("Nomor: ")) - 1
+            if 0 <= idx < len(perusahaan.departemen_list):
+                nama = input("Nama Karyawan: ")
+                posisi = input("Posisi: ")
+                gaji = float(input("Gaji: "))
+                k = Karyawan(nama, posisi, gaji)
+                perusahaan.departemen_list[idx].tambah_karyawan(k)
+                print("Karyawan ditambahkan.")
+            else:
+                print("Pilihan tidak valid.")
+
+        elif pilihan == "3":
+            perusahaan.tampilkan_struktur()
+
+        elif pilihan == "4":
+            nama = input("Nama Departemen yang akan dihapus: ")
+            perusahaan.hapus_departemen(nama)
+            print("Departemen dihapus jika ditemukan.")
+
+        elif pilihan == "0":
+            print("Keluar dari program.")
+            break
+        else:
+            print("Pilihan tidak valid.")
+
+if __name__ == "__main__":
+    menu()
